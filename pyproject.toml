@@ -1,0 +1,10 @@
+[tool.black]
+line-length = 100
+target-version = ['py312']
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = "cidemod"
+skip = ["venv", "migrations"]
