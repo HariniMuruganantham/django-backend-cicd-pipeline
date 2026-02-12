@@ -1,6 +1,7 @@
 # Django Backend CI/CD Pipeline
 
 ![CI](https://github.com/HariniMuruganantham/django-backend-cicd-pipeline/actions/workflows/backend-ci.yml/badge.svg)
+[![Coverage](https://codecov.io/gh/HariniMuruganantham/django-backend-cicd-pipeline/branch/main/graph/badge.svg)](https://codecov.io/gh/HariniMuruganantham/django-backend-cicd-pipeline)
 
 ## 📌 Project Overview
 
