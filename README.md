@@ -1,6 +1,6 @@
 # Django Backend CI/CD Pipeline
 
-![CI](https://github.com/YOUR-USERNAME/django-backend-cicd-pipeline/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/HariniMuruganantham/django-backend-cicd-pipeline/actions/workflows/ci.yml/badge.svg)
 
 ## 📌 Project Overview
 
