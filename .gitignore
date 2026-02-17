@@ -3,24 +3,24 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# SQLite (local dev only — never commit db files)
 *.sqlite3
 db.sqlite3
 
 # Virtual environment
 venv/
 .env/
-.env.*
 
 # Django
 /staticfiles/
 media/
 *.log
 
-# Coverage & test
+# Coverage & test artifacts
 htmlcov/
 .coverage
 coverage.xml
-pytest_cache/
 .pytest_cache/
 .cache/
 
@@ -30,7 +30,8 @@ pytest_cache/
 .DS_Store
 Thumbs.db
 
-# Environment / Secrets
+# Environment / Secrets — NEVER commit these
+.env
 *.env
 *.pem
 secrets.json
