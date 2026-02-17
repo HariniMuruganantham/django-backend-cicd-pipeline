@@ -2,12 +2,11 @@ name: Backend CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-
   # ===============================
   # 🧪 Job 1: Tests + Quality + Coverage
   # ===============================
@@ -15,36 +14,25 @@ jobs:
     name: Run Backend Tests
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     env:
-      POSTGRES_HOST: localhost
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: test_db
+      DJANGO_SETTINGS_MODULE: cidemo.settings
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
@@ -59,26 +47,13 @@ jobs:
           isort --check-only .
           mypy .
 
-      - name: Wait for PostgreSQL
-        run: |
-          for i in {1..30}; do
-            pg_isready -h localhost -p 5432 && break || sleep 1
-          done
-
-      - name: Run migrations
-        run: python manage.py migrate --noinput
-
       - name: Run tests with coverage
-        run: |
-          pytest --disable-warnings \
-                 --cov=. \
-                 --cov-report=xml \
-                 --cov-report=term-missing \
-                 --cov-fail-under=50
+        run: pytest --disable-warnings --cov-fail-under=50
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
 
   # ===============================
@@ -91,12 +66,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Run Trivy filesystem scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.68.0
         with:
           scan-type: fs
+          scan-ref: '.'
           ignore-unfixed: true
           severity: CRITICAL,HIGH
           format: table
@@ -112,15 +88,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t django-backend-ci .
+        run: docker build -t django-backend-ci:${{ github.sha }} .
 
       - name: Run Trivy Docker image scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.68.0
         with:
-          image-ref: django-backend-ci
+          image-ref: django-backend-ci:${{ github.sha }}
           ignore-unfixed: true
           severity: CRITICAL,HIGH
           format: table

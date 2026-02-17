@@ -6,5 +6,5 @@ skip-string-normalization = true
 [tool.isort]
 profile = "black"
 line_length = 100
-known_first_party = "cidemod"
+known_first_party = "cidemo"
 skip = ["venv", "migrations"]
